@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I love you, Carrie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520&family=Great+Vibes&family=Nunito:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #fff7f1;
+      --gold: #ffd27a;
+      --ink: #2a1730;
+      --deep: #e24b73;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; background: #241433; color: var(--cream); font-family: Nunito, sans-serif; }
+
+    .sky {
+      position: relative;
+      height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 22px 16px 18px;
+      overflow: hidden;
+      background:
+        radial-gradient(800px 480px at 50% 115%, #ff8fab 0%, transparent 56%),
+        radial-gradient(640px 380px at 8% 8%, #6a4c9a 0%, transparent 52%),
+        linear-gradient(180deg, #2a1840, #4a2758 55%, #7a3d62);
+    }
+
+    .moon {
+      position: absolute;
+      top: 7%;
+      right: 10%;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff8ea, #ffe1a8 62%, #f0c27a);
+      box-shadow: 0 0 36px 8px rgba(255, 214, 150, 0.32);
+      pointer-events: none;
+    }
+
+    .home, .mute {
+      position: absolute;
+      top: 16px;
+      z-index: 6;
+      border: 1px solid rgba(255, 247, 241, 0.35);
+      background: transparent;
+      color: var(--cream);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: 700 12px Nunito, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .home { left: 16px; }
+    .mute { right: 16px; appearance: none; cursor: pointer; }
+
+    .hud { text-align: center; position: relative; z-index: 2; padding-top: 28px; }
+
+    .kicker {
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .slots { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+    .group { display: flex; gap: 6px; }
+
+    .slot {
+      width: 26px;
+      height: 36px;
+      border-bottom: 2px solid rgba(255, 247, 241, 0.28);
+      font-family: Fraunces, serif;
+      font-size: 26px;
+      line-height: 1;
+      color: transparent;
+      display: grid;
+      place-items: center;
+    }
+
+    .slot.on { color: var(--cream); border-bottom-color: var(--gold); }
+
+    .hint { margin-top: 10px; min-height: 22px; font-size: 15px; color: rgba(255, 247, 241, 0.82); }
+
+    .field {
+      position: relative;
+      z-index: 2;
+      width: min(680px, 100%);
+      margin: 0 auto;
+      min-height: 320px;
+    }
+
+    .heart {
+      position: absolute;
+      width: 84px;
+      height: 78px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      filter: drop-shadow(0 10px 10px rgba(70, 16, 40, 0.28));
+    }
+
+    .heart svg { width: 100%; height: 100%; display: block; }
+    .heart .mark {
+      position: absolute;
+      inset: 8px 0 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-family: Fraunces, serif;
+      font-size: 26px;
+      pointer-events: none;
+    }
+
+    .heart.decoy svg path { fill: #f3c2d0; }
+    .heart.bad { animation: shake 0.35s ease; }
+
+    .progress {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: rgba(255, 247, 241, 0.75);
+    }
+
+    .bar {
+      width: min(220px, 60%);
+      height: 6px;
+      margin: 8px auto 0;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.16);
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--gold), white);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(28, 14, 36, 0.28);
+      backdrop-filter: blur(6px);
+    }
+
+    .panel {
+      width: min(420px, 100%);
+      text-align: center;
+      background: rgba(255, 247, 241, 0.95);
+      color: var(--ink);
+      border-radius: 28px;
+      padding: 28px 22px 22px;
+    }
+
+    h1 {
+      font-family: "Great Vibes", cursive;
+      font-weight: 400;
+      font-size: clamp(54px, 12vw, 78px);
+      line-height: 1.05;
+      color: var(--deep);
+    }
+
+    .sub { margin: 8px 0 18px; color: #6d4a5c; font-size: 15px; }
+
+    button.go {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      background: var(--ink);
+      color: var(--cream);
+      border-radius: 999px;
+      padding: 12px 22px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font: 700 13px Nunito, sans-serif;
+    }
+
+    .hidden { display: none; }
+
+    @keyframes shake {
+      25% { transform: translateX(-7px); }
+      75% { transform: translateX(7px); }
+    }
+
+    @media (max-width: 700px) {
+      .sky { padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+      .moon {
+        top: auto;
+        bottom: 22%;
+        right: 4%;
+        width: 42px;
+        height: 42px;
+      }
+      .home, .mute {
+        top: max(10px, env(safe-area-inset-top));
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      .hud { padding-top: 34px; }
+      .kicker { font-size: 13px; letter-spacing: 0.16em; }
+      .slots { gap: 8px; }
+      .group { gap: 3px; }
+      .slot { width: 18px; height: 26px; font-size: 17px; }
+      .hint { font-size: 14px; padding: 0 6px; }
+      .field { min-height: 0; }
+      .heart { width: 68px; height: 64px; }
+      .heart .mark { font-size: 20px; }
+      h1 { font-size: 48px; }
+      .panel { padding: 22px 16px 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .heart.bad { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky">
+    <div class="moon" aria-hidden="true"></div>
+    <a class="home" href="./">Back</a>
+    <button class="mute" id="mute" type="button">Sound</button>
+    <div class="hud">
+      <p class="kicker">For Carrie</p>
+      <div class="slots" id="slots"></div>
+      <p class="hint" id="hint">The bright heart has the letter.</p>
+    </div>
+    <div class="field" id="field"></div>
+    <div class="progress">
+      <span id="count">0 / 11</span>
+      <div class="bar"><span id="fill"></span></div>
+    </div>
+
+    <div class="overlay" id="start">
+      <div class="panel">
+        <h1>For Carrie</h1>
+        <p class="sub">Hearts wander off. Tap the one with the next letter.</p>
+        <button class="go" id="play" type="button">Start</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="win">
+      <div class="panel">
+        <h1>I love you, Carrie</h1>
+        <p class="sub">You got all of them. I'm not taking it back.</p>
+        <button class="go" id="again" type="button">Again</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const LETTERS = ["I", "L", "O", "V", "E", "C", "A", "R", "R", "I", "E"];
+    const GROUPS = [[0], [1, 2, 3, 4], [5, 6, 7, 8, 9, 10]];
+    const MISSES = ["Nope. That one's empty.", "Liar heart.", "Not in there.", "The bright one.", "Cute, and wrong."];
+    const HEART = '<svg viewBox="0 0 80 72" aria-hidden="true"><path fill="#ff6d8d" d="M40 66C16 50 6 36 6 23 6 12 14 4 25 4c7 0 11 4 15 10C44 8 48 4 55 4c11 0 19 8 19 19 0 13-10 27-34 43z"/></svg>';
+
+    const slotsEl = document.getElementById("slots");
+    const fieldEl = document.getElementById("field");
+    const hintEl = document.getElementById("hint");
+    const countEl = document.getElementById("count");
+    const fillEl = document.getElementById("fill");
+    const startEl = document.getElementById("start");
+    const winEl = document.getElementById("win");
+
+    function heartBox() {
+      return window.matchMedia("(max-width: 700px)").matches
+        ? { w: 68, h: 64 }
+        : { w: 84, h: 78 };
+    }
+
+    let step = 0;
+    let running = false;
+    let hearts = [];
+    let raf = 0;
+    let last = 0;
+    let soundOn = true;
+    let audioCtx = null;
+
+    function tone(freq, duration) {
+      if (!soundOn || !audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function drawSlots() {
+      slotsEl.innerHTML = "";
+      GROUPS.forEach((group) => {
+        const wrap = document.createElement("div");
+        wrap.className = "group";
+        group.forEach((index) => {
+          const slot = document.createElement("span");
+          slot.className = "slot" + (index < step ? " on" : "");
+          slot.textContent = LETTERS[index];
+          wrap.appendChild(slot);
+        });
+        slotsEl.appendChild(wrap);
+      });
+      countEl.textContent = step + " / " + LETTERS.length;
+      fillEl.style.width = (step / LETTERS.length) * 100 + "%";
+    }
+
+    function spawn() {
+      hearts.forEach((heart) => heart.el.remove());
+      hearts = [];
+      const width = fieldEl.clientWidth;
+      const height = fieldEl.clientHeight;
+      const box = heartBox();
+      const correctAt = Math.floor(Math.random() * 5);
+      for (let i = 0; i < 5; i += 1) {
+        const ok = i === correctAt;
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "heart" + (ok ? "" : " decoy");
+        el.setAttribute("aria-label", ok ? "Letter " + LETTERS[step] : "Not this heart");
+        el.innerHTML = HEART + '<span class="mark">' + (ok ? LETTERS[step] : "✦") + "</span>";
+        el.addEventListener("click", () => choose(heart, ok));
+        fieldEl.appendChild(el);
+        const heart = {
+          el,
+          ok,
+          x: 8 + Math.random() * Math.max(20, width - box.w - 16),
+          y: 8 + Math.random() * Math.max(20, height - box.h - 16),
+          vx: (Math.random() < 0.5 ? -1 : 1) * (0.04 + Math.random() * 0.05),
+          vy: (Math.random() < 0.5 ? -1 : 1) * (0.03 + Math.random() * 0.04)
+        };
+        hearts.push(heart);
+      }
+      hintEl.textContent = "Need " + LETTERS[step] + ". Bright heart.";
+    }
+
+    function choose(heart, ok) {
+      if (!running) return;
+      if (!ok) {
+        heart.el.classList.remove("bad");
+        void heart.el.offsetWidth;
+        heart.el.classList.add("bad");
+        hintEl.textContent = MISSES[Math.floor(Math.random() * MISSES.length)];
+        tone(220, 0.12);
+        return;
+      }
+      running = false;
+      tone(440 + step * 28, 0.16);
+      step += 1;
+      drawSlots();
+      if (step >= LETTERS.length) {
+        hearts.forEach((item) => item.el.remove());
+        hearts = [];
+        finish();
+        return;
+      }
+      window.setTimeout(() => {
+        running = true;
+        spawn();
+      }, 180);
+    }
+
+    function frame(now) {
+      const dt = Math.min(34, now - last || 16);
+      last = now;
+      if (running) {
+        const width = fieldEl.clientWidth;
+        const height = fieldEl.clientHeight;
+        const box = heartBox();
+        hearts.forEach((heart) => {
+          heart.x += heart.vx * dt;
+          heart.y += heart.vy * dt;
+          if (heart.x < 0 || heart.x > width - box.w) heart.vx *= -1;
+          if (heart.y < 0 || heart.y > height - box.h) heart.vy *= -1;
+          heart.x = Math.max(0, Math.min(width - box.w, heart.x));
+          heart.y = Math.max(0, Math.min(height - box.h, heart.y));
+          heart.el.style.left = heart.x + "px";
+          heart.el.style.top = heart.y + "px";
+        });
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function finish() {
+      hintEl.textContent = "That's the whole sentence.";
+      tone(523, 0.18);
+      window.setTimeout(() => tone(659, 0.2), 140);
+      window.setTimeout(() => tone(784, 0.3), 280);
+      winEl.classList.remove("hidden");
+    }
+
+    function begin() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!audioCtx && Ctx) audioCtx = new Ctx();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      step = 0;
+      running = true;
+      last = 0;
+      startEl.classList.add("hidden");
+      winEl.classList.add("hidden");
+      drawSlots();
+      spawn();
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+
+    document.getElementById("play").addEventListener("click", begin);
+    document.getElementById("again").addEventListener("click", begin);
+    document.getElementById("mute").addEventListener("click", () => {
+      soundOn = !soundOn;
+      document.getElementById("mute").textContent = soundOn ? "Sound" : "Muted";
+    });
+
+    drawSlots();
+  </script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I'm sorry, Carrie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #f6ead9;
+      --gold: #e7c48a;
+      --ink: #2a1730;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #140e14;
+      color: var(--cream);
+      font-family: Nunito, sans-serif;
+    }
+
+    .sky {
+      position: relative;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(1000px 560px at 50% 118%, #5a2a40 0%, transparent 56%),
+        radial-gradient(700px 420px at 18% 12%, #2c1834 0%, transparent 50%),
+        radial-gradient(640px 360px at 86% 8%, #1c2438 0%, transparent 46%),
+        #160f18;
+    }
+
+    .stars { position: absolute; inset: 0; pointer-events: none; }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: #fff6ea;
+      opacity: 0.7;
+      animation: twinkle 3.2s ease-in-out infinite;
+    }
+
+    .home, .mute {
+      position: absolute;
+      top: 16px;
+      z-index: 6;
+      border: 1px solid rgba(231, 196, 138, 0.45);
+      color: var(--gold);
+      background: transparent;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: 700 12px Nunito, sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .home { left: 16px; }
+    .mute { right: 16px; appearance: none; cursor: pointer; }
+
+    .line {
+      position: relative;
+      z-index: 2;
+      min-height: 78px;
+      margin-top: 58px;
+      text-align: center;
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(46px, 8vw, 72px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--cream);
+      text-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .hint {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      min-height: 22px;
+      color: rgba(246, 234, 217, 0.78);
+      font-size: 15px;
+    }
+
+    .stage {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .character {
+      width: min(240px, 46vw);
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.28));
+    }
+
+    .character svg { width: 100%; height: auto; overflow: visible; }
+    .bow, .roses { transform-box: fill-box; }
+    .bow { transform-origin: 50% 92%; }
+    .roses { transform-origin: center; }
+    .character.bowing { width: min(290px, 62vw); transition: width 0.7s ease; }
+    .character.bowing .bow { animation: bow 5s ease-in-out infinite; }
+    .character.bowing .roses { animation: offer 5s ease-in-out infinite; }
+    .sky.done .stage { padding-bottom: 64px; }
+    .eye { transform-origin: center; animation: blink 5.4s ease-in-out infinite; }
+    .rose { opacity: 0; transform: scale(0.4); transform-box: fill-box; transform-origin: center; transition: opacity 0.4s ease, transform 0.4s ease; }
+    .rose.show { opacity: 1; transform: scale(1); }
+
+    .petals { position: absolute; inset: 0; }
+
+    .petal {
+      position: absolute;
+      width: 74px;
+      height: 96px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      animation: drift 4.8s ease-in-out infinite;
+    }
+
+    .petal i {
+      display: block;
+      width: 54px;
+      height: 72px;
+      margin: 0 auto;
+      background: radial-gradient(circle at 30% 30%, #ffd7de, #d86b7a 72%);
+      border-radius: 70% 10% 70% 10%;
+      transform: rotate(18deg);
+      box-shadow: 0 10px 16px rgba(40, 10, 20, 0.22);
+    }
+
+    .petal b {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-family: "Great Vibes", cursive;
+      font-size: 28px;
+      font-weight: 400;
+      color: #3a241c;
+      pointer-events: none;
+    }
+
+    .petal.gold {
+      width: 124px;
+      height: 70px;
+    }
+
+    .petal.gold i {
+      width: 116px;
+      height: 52px;
+      margin-top: 9px;
+      border-radius: 50%;
+      transform: none;
+      background: radial-gradient(circle at 32% 30%, #fff4d4, #e7c07a 70%);
+      box-shadow: 0 0 22px 6px rgba(231, 196, 138, 0.45);
+    }
+
+    .petal.gold b {
+      font-family: Nunito, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .petal:nth-child(2) { animation-delay: -1s; }
+    .petal:nth-child(3) { animation-delay: -2s; }
+    .petal:nth-child(4) { animation-delay: -0.6s; }
+    .petal:nth-child(5) { animation-delay: -2.4s; }
+    .petal:nth-child(6) { animation-delay: -1.6s; }
+    .petal.bad i { animation: shake 0.35s ease; }
+
+    .drift {
+      position: absolute;
+      bottom: 8%;
+      width: 14px;
+      height: 18px;
+      border-radius: 80% 0 80% 0;
+      background: radial-gradient(circle at 30% 30%, #ffd4d6, #d56b78 70%);
+      pointer-events: none;
+      animation: rise linear infinite;
+    }
+
+    .again {
+      position: absolute;
+      left: 50%;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 4;
+      appearance: none;
+      border: 1px solid rgba(231, 196, 138, 0.55);
+      background: transparent;
+      color: var(--gold);
+      border-radius: 999px;
+      padding: 10px 18px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font: 700 12px Nunito, sans-serif;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(16, 10, 16, 0.28);
+      backdrop-filter: blur(5px);
+    }
+
+    .panel {
+      width: min(400px, 100%);
+      text-align: center;
+      background: rgba(255, 247, 241, 0.95);
+      color: var(--ink);
+      border-radius: 28px;
+      padding: 28px 22px 22px;
+    }
+
+    h1 {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(54px, 12vw, 76px);
+      font-weight: 400;
+      line-height: 1.05;
+      color: #c45b6a;
+    }
+
+    .sub { margin: 8px 0 18px; color: #6d4a5c; font-size: 15px; }
+
+    button.go {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      background: var(--ink);
+      color: var(--cream);
+      border-radius: 999px;
+      padding: 12px 22px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font: 700 13px Nunito, sans-serif;
+    }
+
+    .hidden { display: none; }
+
+    @keyframes twinkle {
+      50% { opacity: 1; transform: scale(1.6); }
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(-50%, -50%); }
+      50% { transform: translate(-50%, calc(-50% - 10px)); }
+    }
+
+    @keyframes shake {
+      25% { transform: rotate(10deg); }
+      75% { transform: rotate(-8deg); }
+    }
+
+    @keyframes bow {
+      0%, 20%, 100% { transform: rotate(0deg) translateY(0); }
+      42%, 58% { transform: rotate(26deg) translate(10px, 16px); }
+    }
+
+    @keyframes offer {
+      0%, 20%, 100% { transform: translate(0, 0) scale(1); }
+      42%, 58% { transform: translate(16px, 20px) scale(1.2); }
+    }
+
+    @keyframes rise {
+      0% { opacity: 0; transform: translateY(0) rotate(0deg); }
+      12% { opacity: 0.85; }
+      100% { opacity: 0; transform: translateY(-68vh) rotate(220deg); }
+    }
+
+    @keyframes blink {
+      0%, 46%, 50%, 100% { transform: scaleY(1); }
+      48% { transform: scaleY(0.08); }
+    }
+
+    @media (max-width: 700px) {
+      .line {
+        margin-top: 52px;
+        min-height: 58px;
+        padding: 0 16px;
+        font-size: clamp(34px, 10vw, 48px);
+      }
+      .hint { font-size: 14px; padding: 0 16px; }
+      .stage { padding-bottom: 8px; }
+      .character { width: min(168px, 40vw); }
+      .petal { width: 56px; height: 72px; }
+      .petal i { width: 40px; height: 52px; }
+      .petal.gold { width: 104px; height: 58px; }
+      .petal.gold i { width: 98px; height: 44px; margin-top: 7px; }
+      .petal.gold b { font-size: 14px; }
+      .home, .mute {
+        top: max(10px, env(safe-area-inset-top));
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      h1 { font-size: 48px; }
+      .panel { padding: 22px 16px 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .star, .petal, .eye, .character.bowing .bow { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky">
+    <div class="stars" id="stars"></div>
+    <a class="home" href="./">Back</a>
+    <button class="mute" id="mute" type="button">Sound</button>
+    <p class="line" id="line"></p>
+    <p class="hint" id="hint">The gold petal has the word.</p>
+    <div class="stage">
+      <div class="petals" id="petals"></div>
+      <div class="character" id="character">
+        <svg viewBox="0 0 220 250">
+          <ellipse cx="110" cy="236" rx="52" ry="9" fill="#000" opacity="0.22" />
+          <g class="bow">
+            <path d="M88 214c0 10 8 16 22 16s22-6 22-16c0-6-6-8-22-8s-22 2-22 8z" fill="#3a2430" />
+            <path d="M74 150c2 34 12 56 36 56s34-22 36-56c-10 8-23 12-36 12s-26-4-36-12z" fill="#c47a86" />
+            <path d="M70 158c-16 8-24 22-22 30 4 10 18 8 28-2" fill="#f3d2c2" />
+            <path d="M150 158c16 8 24 22 22 30-4 10-18 8-28-2" fill="#f3d2c2" />
+            <circle cx="110" cy="108" r="50" fill="#f3d2c2" />
+            <path d="M66 98c10-40 28-56 44-56 11 0 16 7 22 7s11-7 20-7c18 0 34 18 42 52-20-12-42-18-64-18s-46 6-64 22z" fill="#2b1a22" />
+            <ellipse cx="74" cy="78" rx="15" ry="19" fill="#2b1a22" />
+            <ellipse cx="148" cy="78" rx="15" ry="19" fill="#2b1a22" />
+            <ellipse cx="84" cy="122" rx="11" ry="7" fill="#e58b90" />
+            <ellipse cx="136" cy="122" rx="11" ry="7" fill="#e58b90" />
+            <g class="eye"><path d="M88 108c6 8 14 8 20 0" stroke="#2b1a22" stroke-width="3.2" fill="none" stroke-linecap="round" /></g>
+            <g class="eye"><path d="M112 108c6 8 14 8 20 0" stroke="#2b1a22" stroke-width="3.2" fill="none" stroke-linecap="round" /></g>
+            <path d="M104 128c4 6 12 6 16 0" stroke="#b56b72" stroke-width="2.4" fill="none" stroke-linecap="round" />
+            <g class="roses">
+              <circle class="rose" id="rose0" cx="176" cy="150" r="11" fill="#d45d6a" />
+              <circle class="rose" id="rose1" cx="194" cy="138" r="9" fill="#e8b4b0" />
+              <circle class="rose" id="rose2" cx="188" cy="162" r="10" fill="#c94b5c" />
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="overlay" id="start">
+      <div class="panel">
+        <h1>I'm sorry</h1>
+        <p class="sub">She's waiting. Tap the gold petal each time. The pink ones are just petals.</p>
+        <button class="go" id="play" type="button">Start</button>
+      </div>
+    </div>
+
+    <button class="again hidden" id="again" type="button">Again</button>
+  </div>
+  <script>
+    const WORDS = ["I'm", "sorry,", "Carrie"];
+    function spots() {
+      const phone = window.matchMedia("(max-width: 700px)").matches;
+      const rx = phone ? 34 : 30;
+      const ry = phone ? 30 : 28;
+      return Array.from({ length: 6 }, (_, index) => {
+        const angle = (index / 6) * Math.PI * 2 - Math.PI / 2;
+        return [
+          50 + Math.cos(angle) * rx + "%",
+          50 + Math.sin(angle) * ry + "%"
+        ];
+      });
+    }
+    const MISSES = ["Just a petal.", "The gold one.", "Not that one."];
+
+    const lineEl = document.getElementById("line");
+    const hintEl = document.getElementById("hint");
+    const petalsEl = document.getElementById("petals");
+    const characterEl = document.getElementById("character");
+    const startEl = document.getElementById("start");
+    const againEl = document.getElementById("again");
+    const skyEl = document.querySelector(".sky");
+
+    let step = 0;
+    let locked = false;
+    let soundOn = true;
+    let audioCtx = null;
+
+    function tone(freq, duration) {
+      if (!soundOn || !audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.07, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function stars() {
+      const box = document.getElementById("stars");
+      for (let i = 0; i < 26; i += 1) {
+        const star = document.createElement("span");
+        star.className = "star";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.top = Math.random() * 70 + "%";
+        star.style.animationDelay = Math.random() * 3 + "s";
+        box.appendChild(star);
+      }
+    }
+
+    function paintLine() {
+      lineEl.textContent = WORDS.slice(0, step).join(" ");
+      for (let i = 0; i < 3; i += 1) {
+        document.getElementById("rose" + i).classList.toggle("show", i < step);
+      }
+    }
+
+    function round() {
+      locked = false;
+      petalsEl.innerHTML = "";
+      const ring = spots();
+      const goldAt = Math.floor(Math.random() * ring.length);
+      ring.forEach((spot, index) => {
+        const gold = index === goldAt;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "petal" + (gold ? " gold" : "");
+        button.style.left = spot[0];
+        button.style.top = spot[1];
+        button.innerHTML = "<i></i>" + (gold ? "<b>" + WORDS[step] + "</b>" : "");
+        button.setAttribute("aria-label", gold ? WORDS[step] : "Petal");
+        button.addEventListener("click", () => choose(button, gold));
+        petalsEl.appendChild(button);
+      });
+      hintEl.textContent = "Find " + WORDS[step] + ".";
+    }
+
+    function choose(button, gold) {
+      if (locked) return;
+      if (!gold) {
+        button.classList.remove("bad");
+        void button.offsetWidth;
+        button.classList.add("bad");
+        hintEl.textContent = MISSES[Math.floor(Math.random() * MISSES.length)];
+        tone(230, 0.1);
+        return;
+      }
+      locked = true;
+      tone(494, 0.16);
+      step += 1;
+      paintLine();
+      if (step >= WORDS.length) {
+        finish();
+        return;
+      }
+      window.setTimeout(round, 280);
+    }
+
+    function finish() {
+      petalsEl.innerHTML = "";
+      for (let i = 0; i < 12; i += 1) {
+        const petal = document.createElement("span");
+        petal.className = "drift";
+        petal.style.left = 8 + Math.random() * 84 + "%";
+        petal.style.animationDuration = 7 + Math.random() * 4 + "s";
+        petal.style.animationDelay = Math.random() * 1.4 + "s";
+        petalsEl.appendChild(petal);
+      }
+      characterEl.classList.add("bowing");
+      skyEl.classList.add("done");
+      hintEl.textContent = "She has the flowers now.";
+      againEl.classList.remove("hidden");
+      tone(587, 0.18);
+      window.setTimeout(() => tone(698, 0.28), 150);
+    }
+
+    function begin() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!audioCtx && Ctx) audioCtx = new Ctx();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      step = 0;
+      locked = false;
+      characterEl.classList.remove("bowing");
+      skyEl.classList.remove("done");
+      startEl.classList.add("hidden");
+      againEl.classList.add("hidden");
+      paintLine();
+      round();
+    }
+
+    document.getElementById("play").addEventListener("click", begin);
+    document.getElementById("again").addEventListener("click", begin);
+    document.getElementById("mute").addEventListener("click", () => {
+      soundOn = !soundOn;
+      document.getElementById("mute").textContent = soundOn ? "Sound" : "Muted";
+    });
+
+    stars();
+  </script>
+</body>
+</html>

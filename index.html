@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I'm sorry, Carrie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --night: #140e14;
+      --plum: #2a1824;
+      --rose: #e8a4a8;
+      --blush: #f3c7c4;
+      --cream: #f6ead9;
+      --gold: #e0b57a;
+      --ink: #3b2a2f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--night);
+      color: var(--cream);
+      font-family: "Source Sans 3", sans-serif;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(1200px 700px at 50% 110%, #4a2236 0%, transparent 55%),
+        radial-gradient(800px 500px at 20% 20%, #2c1630 0%, transparent 50%),
+        radial-gradient(700px 400px at 80% 10%, #1e2438 0%, transparent 45%),
+        var(--night);
+    }
+
+    .grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    .stars, .petals, .fireflies {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff8ea;
+      border-radius: 50%;
+      animation: twinkle 3.6s ease-in-out infinite;
+    }
+
+    .petal {
+      position: absolute;
+      top: -40px;
+      width: 14px;
+      height: 18px;
+      background: radial-gradient(circle at 30% 30%, #ffd4d6, #d56b78 70%);
+      border-radius: 80% 0 80% 0;
+      opacity: 0.7;
+      animation: fall linear infinite;
+    }
+
+    .firefly {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #ffe7a8;
+      border-radius: 50%;
+      box-shadow: 0 0 10px 4px rgba(255, 214, 130, 0.55);
+      animation: drift 9s ease-in-out infinite;
+    }
+
+    .moon {
+      position: absolute;
+      top: 8%;
+      right: 12%;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff4d6, #e8c98a 55%, #c9a05a);
+      box-shadow: 0 0 60px 12px rgba(224, 181, 122, 0.28);
+      animation: moonGlow 6s ease-in-out infinite;
+    }
+
+    .scene {
+      position: relative;
+      z-index: 2;
+      width: min(560px, 92vw);
+      text-align: center;
+      transform: translateY(12px);
+    }
+
+    .character {
+      width: 280px;
+      height: 290px;
+      margin: 0 auto 8px;
+      filter: drop-shadow(0 18px 24px rgba(0,0,0,0.28));
+      animation: rise 1.6s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .character svg { width: 100%; height: 100%; overflow: visible; }
+
+    .bow {
+      transform-origin: 110px 220px;
+      animation: bow 4.8s ease-in-out 1.4s infinite;
+    }
+
+    .blush {
+      animation: blushPulse 3.2s ease-in-out 2s infinite;
+    }
+
+    .eye {
+      transform-origin: center;
+      animation: blink 5.2s ease-in-out 2.2s infinite;
+    }
+
+    .bouquet {
+      transform-origin: 154px 168px;
+      animation: offer 4.8s ease-in-out 1.4s infinite;
+    }
+
+    .heart {
+      opacity: 0;
+      animation: floatHeart 4.8s ease-in-out 2.6s infinite;
+    }
+
+    h1 {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(52px, 10vw, 86px);
+      font-weight: 400;
+      line-height: 1;
+      color: var(--cream);
+      margin: 8px 0 0;
+      text-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+
+    h1 span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: letterIn 0.7s cubic-bezier(.22,1,.36,1) forwards;
+    }
+
+    .replay {
+      margin-top: 28px;
+      appearance: none;
+      background: transparent;
+      border: 1px solid rgba(224, 181, 122, 0.45);
+      color: var(--gold);
+      font-family: "Source Sans 3", sans-serif;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 11px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 2.6s forwards;
+    }
+
+    .replay:hover { background: rgba(224, 181, 122, 0.12); }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.6); }
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      12% { opacity: 0.75; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+      50% { transform: translate(30px, -40px); opacity: 0.9; }
+    }
+
+    @keyframes moonGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.12); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(40px) scale(0.94); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes bow {
+      0%, 16%, 100% { transform: rotate(0deg) translateY(0); }
+      38%, 56% { transform: rotate(26deg) translate(10px, 14px); }
+    }
+
+    @keyframes offer {
+      0%, 18%, 100% { transform: translate(0, 0) rotate(0deg); }
+      40%, 58% { transform: translate(8px, 18px) rotate(12deg); }
+    }
+
+    @keyframes blushPulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 0.85; }
+    }
+
+    @keyframes blink {
+      0%, 8%, 12%, 100% { transform: scaleY(1); }
+      10% { transform: scaleY(0.08); }
+    }
+
+    @keyframes floatHeart {
+      0%, 35% { opacity: 0; transform: translateY(0) scale(0.6); }
+      50% { opacity: 1; transform: translateY(-18px) scale(1); }
+      100% { opacity: 0; transform: translateY(-46px) scale(0.7); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes letterIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 520px) {
+      .character { width: 190px; height: 210px; }
+      .moon { width: 64px; height: 64px; right: 8%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="grain"></div>
+    <div class="moon"></div>
+    <div class="stars" id="stars"></div>
+    <div class="fireflies" id="fireflies"></div>
+    <div class="petals" id="petals"></div>
+
+    <div class="scene">
+      <div class="character" aria-hidden="true">
+        <svg viewBox="0 0 220 250" fill="none">
+          <ellipse cx="110" cy="236" rx="52" ry="9" fill="#000" opacity="0.28" />
+          <g class="bow">
+            <path d="M88 214c0 10 8 16 22 16s22-6 22-16c0-6-6-8-22-8s-22 2-22 8z" fill="#3a2430" />
+            <path d="M74 150c2 34 12 56 36 56s34-22 36-56c-10 8-23 12-36 12s-26-4-36-12z" fill="#c47a86" />
+            <path d="M86 156c8 28 16 40 24 40s16-12 24-40" fill="#d89aa3" opacity="0.45" />
+            <path d="M70 158c-16 8-24 22-22 30 4 10 18 8 28-2" fill="#f3d2c2" />
+            <path d="M150 158c16 8 24 22 22 30-4 10-18 8-28-2" fill="#f3d2c2" />
+            <circle cx="110" cy="108" r="50" fill="#f3d2c2" />
+            <path d="M66 98c10-40 28-56 44-56 11 0 16 7 22 7s11-7 20-7c18 0 34 18 42 52-20-12-42-18-64-18s-46 6-64 22z" fill="#2b1a22" />
+            <ellipse cx="74" cy="78" rx="15" ry="19" fill="#2b1a22" />
+            <ellipse cx="148" cy="78" rx="15" ry="19" fill="#2b1a22" />
+            <g class="blush">
+              <ellipse cx="84" cy="122" rx="11" ry="7" fill="#e58b90" />
+              <ellipse cx="136" cy="122" rx="11" ry="7" fill="#e58b90" />
+            </g>
+            <g class="eye">
+              <path d="M88 108c6 8 14 8 20 0" stroke="#2b1a22" stroke-width="3.2" stroke-linecap="round" />
+            </g>
+            <g class="eye">
+              <path d="M112 108c6 8 14 8 20 0" stroke="#2b1a22" stroke-width="3.2" stroke-linecap="round" />
+            </g>
+            <path d="M104 128c4 6 12 6 16 0" stroke="#b56b72" stroke-width="2.4" stroke-linecap="round" />
+            <g class="bouquet">
+              <path d="M148 168c16-18 34-22 48-14" stroke="#4e6a3d" stroke-width="3" stroke-linecap="round" />
+              <circle cx="188" cy="142" r="11" fill="#d45d6a" />
+              <circle cx="200" cy="156" r="9" fill="#e8a4a8" />
+              <circle cx="178" cy="154" r="10" fill="#c94b5c" />
+              <circle cx="194" cy="132" r="8" fill="#f3c7c4" />
+              <circle cx="172" cy="144" r="7" fill="#7aa35a" />
+            </g>
+            <g class="heart" transform="translate(176 108)">
+              <path d="M8 3c0-2.2 1.8-4 4-4 1.6 0 3 .8 4 2 1-1.2 2.4-2 4-2 2.2 0 4 1.8 4 4 0 5-8 9-8 9S8 8 8 3z" fill="#ff8a95" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <h1 id="title"></h1>
+      <button class="replay" type="button" id="replay">Play again</button>
+    </div>
+  </div>
+
+  <script>
+    const title = document.getElementById("title");
+    const words = [
+      { text: "I'm sorry, ", delay: 1.15 },
+      { text: "Carrie", delay: 1.85 }
+    ];
+
+    function writeTitle() {
+      title.innerHTML = "";
+      let i = 0;
+      words.forEach((word) => {
+        [...word.text].forEach((ch) => {
+          const span = document.createElement("span");
+          span.textContent = ch === " " ? "\u00A0" : ch;
+          span.style.animationDelay = `${word.delay + i * 0.05}s`;
+          title.appendChild(span);
+          i += 1;
+        });
+      });
+    }
+
+    function sprinkle(container, count, className, place) {
+      const el = document.getElementById(container);
+      el.innerHTML = "";
+      for (let i = 0; i < count; i += 1) {
+        const node = document.createElement("div");
+        node.className = className;
+        place(node, i);
+        el.appendChild(node);
+      }
+    }
+
+    function scenery() {
+      sprinkle("stars", 48, "star", (node) => {
+        node.style.left = `${Math.random() * 100}%`;
+        node.style.top = `${Math.random() * 70}%`;
+        node.style.animationDelay = `${Math.random() * 4}s`;
+        node.style.opacity = `${0.25 + Math.random() * 0.7}`;
+      });
+
+      sprinkle("fireflies", 8, "firefly", (node) => {
+        node.style.left = `${10 + Math.random() * 80}%`;
+        node.style.top = `${30 + Math.random() * 50}%`;
+        node.style.animationDelay = `${Math.random() * 6}s`;
+        node.style.animationDuration = `${7 + Math.random() * 6}s`;
+      });
+
+      sprinkle("petals", 16, "petal", (node, i) => {
+        node.style.left = `${Math.random() * 100}%`;
+        node.style.animationDuration = `${8 + Math.random() * 8}s`;
+        node.style.animationDelay = `${i * 0.35}s`;
+        node.style.transform = `scale(${0.6 + Math.random() * 0.7})`;
+      });
+    }
+
+    function play() {
+      const stage = document.getElementById("stage");
+      stage.replaceWith(stage.cloneNode(true));
+      const fresh = document.getElementById("stage") || document.querySelector(".stage");
+      fresh.querySelector("#replay").addEventListener("click", play);
+      scenery();
+      const t = document.getElementById("title");
+      t.id = "title";
+      writeTitleInto(t);
+    }
+
+    function writeTitleInto(el) {
+      el.innerHTML = "";
+      let i = 0;
+      words.forEach((word) => {
+        [...word.text].forEach((ch) => {
+          const span = document.createElement("span");
+          span.textContent = ch === " " ? "\u00A0" : ch;
+          span.style.animationDelay = `${word.delay + i * 0.05}s`;
+          el.appendChild(span);
+          i += 1;
+        });
+      });
+    }
+
+    scenery();
+    writeTitle();
+    document.getElementById("replay").addEventListener("click", () => {
+      location.reload();
+    });
+  </script>
+</body>
+</html>
